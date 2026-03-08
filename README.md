@@ -42,6 +42,7 @@ monetary-control/
 │  │  └─ urls.py            # Rotas da API
 │  └─ tests/                # Testes unitários e de API
 └─ manage.py
+```
 
 Este projeto possui uma **API REST** construída com **Django REST Framework** e protegida por **autenticação JWT**.  
 
