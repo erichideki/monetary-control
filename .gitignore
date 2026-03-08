@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Django
+*.sqlite3
+db.sqlite3
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.pot
+*.pyc
+
+# Django migrations
+# Só ignore arquivos __pycache__ dentro de migrations, não as migrations em si
+**/migrations/__pycache__/
+
+# Django local settings
+*.local
+settings_local.py
+
+# Media and static files
+media/
+staticfiles/
+*.egg-info/
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+
+# Test output / coverage
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+
+# Logs
+*.log
