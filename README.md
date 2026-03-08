@@ -1,87 +1,120 @@
-# monetary-control
+# 💰 Monetary Control
 
-[![Python](https://img.shields.io/badge/python-3.12-blue)](https://www.python.org/)  
-[![Django](https://img.shields.io/badge/django-4.x-green)](https://www.djangoproject.com/)  
-[![Pytest](https://img.shields.io/badge/tests-pytest-orange)](https://docs.pytest.org/)  
-[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/seu-usuario/monetary-control/actions)  
-[![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)  
+![Python](https://img.shields.io/badge/python-3.12-blue)
+![Django](https://img.shields.io/badge/django-4.x-green)
+![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
+![Build](https://img.shields.io/badge/build-passing-brightgreen)
 
-Um projeto Django de estudo para **controle financeiro pessoal**, utilizando **DDD soft**, **Clean Code** e **Clean Architecture**, com APIs REST e autenticação JWT.  
-
-O objetivo é criar um **sistema simples de gestão financeira**, permitindo criar transações (receitas e despesas), categorizar, gerar relatórios e praticar boas práticas de arquitetura de software.  
+Sistema de controle financeiro desenvolvido em **Django** com foco em **DDD soft**, Clean Code e Clean Architecture.  
+Projeto de estudo com APIs REST e autenticação JWT.
 
 ---
 
-## Tecnologias
+## 🛠 Tecnologias
 
 - Python 3.12  
 - Django 4.x  
 - Django REST Framework  
-- SQLite (para estudo; pode ser substituído por PostgreSQL)  
-- JWT (via `djangorestframework-simplejwt`)  
+- JWT para autenticação  
+- SQLite (desenvolvimento)  
+- Factory Boy + Pytest para testes  
 
 ---
 
-## Arquitetura
+## 📁 Estrutura do projeto
 
-- **DDD soft:** separação de **models**, **services**, **repositories** e **use cases** mantendo o Django funcional.  
-- **Clean Architecture:** cada camada com responsabilidade única.  
-- **Clean Code:** nomes claros, consistência, DTOs e validações centralizadas.  
 
-Estrutura do projeto:
-
-```text
 monetary-control/
-├─ finance/
-│  ├─ models/               # Modelos (transaction, account, category)
-│  ├─ repositories/         # Acesso a dados
-│  ├─ services/             # Lógica de negócio
-│  ├─ api/
-│  │  ├─ serializers/       # Serializers Django REST
-│  │  ├─ views.py           # Endpoints
-│  │  └─ urls.py            # Rotas da API
-│  └─ tests/                # Testes unitários e de API
-└─ manage.py
-```
+│
+├── finance/ # Core do domínio
+│ ├── models/ # Models DDD soft
+│ │ ├── account.py
+│ │ ├── category.py
+│ │ └── transaction.py
+│ ├── repositories/
+│ └── services/
+│
+├── finance/api/ # API REST
+│ ├── serializers/
+│ │ ├── transaction_serializer.py
+│ ├── views.py
+│ └── urls.py
+│
+├── finance/tests/ # Testes unitários e de integração
+│
+├── manage.py
+├── requirements.txt
+└── README.md
 
-Este projeto possui uma **API REST** construída com **Django REST Framework** e protegida por **autenticação JWT**.  
 
 ---
 
-## 🔑 Autenticação JWT
+## ⚙️ Setup do projeto
 
-| Endpoint           | Método | Descrição                          | Autenticação |
-|------------------|--------|-----------------------------------|--------------|
-| `/api/token/`     | POST   | Obter tokens JWT (access e refresh) | Não          |
-| `/api/token/refresh/` | POST | Renovar token access usando refresh | Não          |
+1. Clone o repositório:
 
-**Exemplo de request para obter JWT:**
+```bash
+git clone https://github.com/seu-usuario/monetary-control.git
+cd monetary-control
 
-```json
+Crie e ative um virtualenv:
+
+python -m venv .venv
+source .venv/bin/activate  # Linux/macOS
+.venv\Scripts\activate     # Windows
+
+Instale as dependências:
+
+pip install -r requirements.txt
+
+Rode migrações:
+
+python manage.py migrate
+
+Crie superusuário:
+
+python manage.py createsuperuser
+
+Inicie o servidor:
+
+python manage.py runserver
+✅ Rodando testes
+pytest
+
+Testes usam Factory Boy para dados fictícios
+
+Cobrem services, usecases e APIs
+
+📌 API Reference
+
+Todos os endpoints protegidos requerem Bearer JWT.
+
+🔑 Autenticação
+Endpoint	Método	Descrição
+/api/token/	POST	Obter access e refresh tokens
+/api/token/refresh/	POST	Renovar access token
+
+Request exemplo:
+
 {
   "username": "usuario1",
   "password": "senha123"
 }
 
-Exemplo de resposta:
+Resposta:
 
 {
   "refresh": "<refresh_token>",
   "access": "<access_token>"
 }
 
-Exemplo de resposta:
+Use o access no header Authorization: Bearer <access_token>.
 
-{
-  "refresh": "<refresh_token>",
-  "access": "<access_token>"
-}
+💰 Criar transação
+Endpoint	Método	Descrição
+/api/transactions/	POST	Criar transação (EXPENSE ou INCOME)
 
-💰 Criar Transação
-Endpoint	Método	Descrição	Autenticação
-/api/transactions/	POST	Criar transação (expense ou income)	Sim
-
-Payload para despesa (expense):
+Payload - Expense:
 
 {
   "account": 1,
@@ -91,7 +124,7 @@ Payload para despesa (expense):
   "description": "Mercado"
 }
 
-Payload para receita (income):
+Payload - Income:
 
 {
   "account": 1,
@@ -106,20 +139,20 @@ Resposta esperada:
 {
   "id": 1
 }
-📊 Relatório de Transações
-Endpoint	Método	Descrição	Autenticação
-/api/transactions/report/	GET	Listar todas as transações do usuário	Sim
+📊 Relatório de transações
+Endpoint	Método	Descrição
+/api/transactions/report/	GET	Listar todas as transações do usuário
 
 Parâmetros opcionais:
 
-type → EXPENSE ou INCOME (filtra por tipo de transação)
+type → EXPENSE ou INCOME (filtra por tipo)
 
-Exemplo de requisição filtrada:
+Exemplo de requisição:
 
 GET /api/transactions/report/?type=EXPENSE
 Authorization: Bearer <access_token>
 
-Exemplo de resposta:
+Resposta exemplo:
 
 [
   {
@@ -141,60 +174,20 @@ Exemplo de resposta:
     "created_at": "2026-03-07T18:50:00Z"
   }
 ]
-⚙️ Notas técnicas
-
-Todos os endpoints protegidos exigem Bearer JWT no header.
-
-account e category devem existir no banco antes de criar transações.
-
-Tipos válidos para type:
-
-EXPENSE → despesa
-
-INCOME → receita
-
-O sistema gera automaticamente a data de criação (created_at).
-
-As transações são vinculadas ao usuário autenticado (request.user).
-
-🔄 Fluxo de uso sugerido
+🔄 Fluxo completo de uso
 
 Obter token JWT via /api/token/.
 
-Criar transações usando POST /api/transactions/ com token no header.
+Criar transações (POST /api/transactions/) usando token no header.
 
-Consultar relatório usando GET /api/transactions/report/.
+Consultar relatório (GET /api/transactions/report/) com ou sem filtro de tipo.
 
-Filtrar relatório por tipo: /api/transactions/report/?type=EXPENSE ou ?type=INCOME.
+⚡ Notas técnicas
 
-💡 Exemplo completo do fluxo
+account e category devem existir antes de criar transações.
 
-Obter token:
+Tipos válidos: EXPENSE (despesa), INCOME (receita)
 
-curl -X POST http://127.0.0.1:8000/api/token/ \
--H "Content-Type: application/json" \
--d '{"username": "usuario1", "password": "senha123"}'
+created_at gerado automaticamente
 
-Criar despesa:
-
-curl -X POST http://127.0.0.1:8000/api/transactions/ \
--H "Authorization: Bearer <access_token>" \
--H "Content-Type: application/json" \
--d '{"account":1,"category":1,"amount":"50.00","type":"EXPENSE","description":"Mercado"}'
-
-Criar receita:
-
-curl -X POST http://127.0.0.1:8000/api/transactions/ \
--H "Authorization: Bearer <access_token>" \
--H "Content-Type: application/json" \
--d '{"account":1,"category":2,"amount":"1000.00","type":"INCOME","description":"Salário"}'
-
-Consultar relatório:
-
-curl -X GET http://127.0.0.1:8000/api/transactions/report/ \
--H "Authorization: Bearer <access_token>"
-
-Consultar relatório filtrado por tipo:
-
-curl -X GET http://127.0.0.1:8000/api/transactions/report/?type=EXPENSE \
--H "Authorization: Bearer <access_token>"
+Transações vinculadas ao usuário autenticado (request.user)
